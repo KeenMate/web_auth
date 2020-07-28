@@ -144,6 +144,16 @@ defmodule WebAuth.Tokens do
     end
   end
 
+  def put_refresh_token_in_cookie(conn, refresh_token, expires_in) do
+    conn
+    |> Conn.put_resp_cookie(
+      Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
+      refresh_token,
+      http_only: true,
+      max_age: expires_in
+    )
+  end
+
   defp put_id_token_into_session(conn, %{"id_token" => token}) do
     conn
     |> Conn.put_session(@id_token_key, token)
@@ -166,9 +176,13 @@ defmodule WebAuth.Tokens do
     conn
   end
 
-  defp put_access_token_into_session(conn, %{"access_token" => token}) do
+  def put_access_token_into_session(conn, %{"access_token" => token}) do
+    put_access_token_into_session(conn, token)
+  end
+
+  def put_access_token_into_session(conn, access_token) when is_binary(access_token) do
     conn
-    |> Conn.put_session(@access_token_key, token)
+    |> Conn.put_session(@access_token_key, access_token)
   end
 
   def put_access_token_into_session(conn, _tokens) do
