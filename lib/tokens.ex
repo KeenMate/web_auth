@@ -102,63 +102,47 @@ defmodule WebAuth.Tokens do
   end
 
   @spec id_token_in_private?(Conn.t()) :: boolean()
-  def id_token_in_private?(conn) do
-    (conn.private[@id_token_key] &&
-       true) ||
-      false
-  end
+  def id_token_in_private?(conn), do: Map.has_key?(conn.private, @id_token_key)
 
   @spec id_token_in_session?(Conn.t()) :: boolean()
   def id_token_in_session?(conn) do
-    (conn
-     |> Conn.get_session(@id_token_key) &&
-       true) ||
-      false
+    case Conn.get_session(conn, @id_token_key) do
+      nil -> false
+      _ -> true
+    end
   end
 
   @spec access_token_in_private?(Conn.t()) :: boolean()
-  def access_token_in_private?(conn) do
-    (conn.private[@access_token_key] &&
-       true) ||
-      false
-  end
+  def access_token_in_private?(conn), do: Map.has_key?(conn.private, @access_token_key)
 
   @spec access_token_in_session?(Conn.t()) :: boolean()
   def access_token_in_session?(conn) do
-    (conn
-     |> Conn.get_session(@access_token_key) &&
-       true) ||
-      false
+    case Conn.get_session(conn, @access_token_key) do
+      nil -> false
+      _ -> true
+    end
   end
 
   @spec id_claims_in_private?(Conn.t()) :: boolean()
-  def id_claims_in_private?(conn) do
-    (conn.private[@id_claims_key] &&
-       true) ||
-      false
-  end
+  def id_claims_in_private?(conn), do: Map.has_key?(conn.private, @id_claims_key)
 
   @spec id_claims_in_session?(Conn.t()) :: boolean()
   def id_claims_in_session?(conn) do
-    (conn
-     |> Conn.get_session(@id_claims_key) &&
-       true) ||
-      false
+    case Conn.get_session(conn, @id_claims_key) do
+      nil -> false
+      _ -> true
+    end
   end
 
   @spec access_claims_in_private?(Conn.t()) :: boolean()
-  def access_claims_in_private?(conn) do
-    (conn.private[@access_claims_key] &&
-       true) ||
-      false
-  end
+  def access_claims_in_private?(conn), do: Map.has_key?(conn.private, @access_claims_key)
 
   @spec access_claims_in_session?(Conn.t()) :: boolean()
   def access_claims_in_session?(conn) do
-    (conn
-     |> Conn.get_session(@access_claims_key) &&
-       true) ||
-      false
+    case Conn.get_session(conn, @access_claims_key) do
+      nil -> false
+      _ -> true
+    end
   end
 
   defp put_id_token_into_session(conn, %{"id_token" => token}) do
