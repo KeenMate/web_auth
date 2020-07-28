@@ -95,8 +95,7 @@ defmodule WebAuth.Tokens do
   def put_claims_into_private(conn, id_claims, access_claims) do
     with_id_conn = (id_claims && Conn.put_private(conn, @id_claims_key, id_claims)) || conn
 
-    with_access_conn =
-      (access_claims && Conn.put_private(with_id_conn, @access_claims_key, access_claims)) || conn
+    with_access_conn = (access_claims && Conn.put_private(with_id_conn, @access_claims_key, access_claims)) || conn
 
     with_access_conn
   end
@@ -151,9 +150,7 @@ defmodule WebAuth.Tokens do
   end
 
   defp put_id_token_into_session(conn, _tokens) do
-    Logger.warn(
-      "Key 'id_token' was not found in tokens map while storing them inside conn's session"
-    )
+    Logger.warn("Key 'id_token' was not found in tokens map while storing them inside conn's session")
 
     conn
   end
@@ -164,9 +161,7 @@ defmodule WebAuth.Tokens do
   end
 
   defp put_refresh_token_into_session(conn, _tokens) do
-    Logger.warn(
-      "Key 'refresh_token' was not found in tokens map while storing them inside conn's session"
-    )
+    Logger.warn("Key 'refresh_token' was not found in tokens map while storing them inside conn's session")
 
     conn
   end
@@ -176,10 +171,8 @@ defmodule WebAuth.Tokens do
     |> Conn.put_session(@access_token_key, token)
   end
 
-  defp put_access_token_into_session(conn, _tokens) do
-    Logger.warn(
-      "Key 'access_token' was not found in tokens map while storing them inside conn's session"
-    )
+  def put_access_token_into_session(conn, _tokens) do
+    Logger.warn("Key 'access_token' was not found in tokens map while storing them inside conn's session")
 
     conn
   end
