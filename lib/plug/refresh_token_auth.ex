@@ -7,6 +7,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
 
   alias Plug.Conn
   alias WebAuth.Tokens
+  alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
     params
@@ -40,7 +41,9 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
          {:ok, refresh_token_expiration} <- Map.fetch(tokens, "refresh_expires_in"),
          {:ok, new_access_token} <- Map.fetch(tokens, "access_token"),
          #  {:ok, id_claims} <- OpenIDConnect.verify(:keycloak, tokens["id_token"]),
-         {:ok, access_claims} <- OpenIDConnect.verify(:keycloak, new_access_token) do
+         {:ok, access_claims} <- OpenIDConnect.verify(:keycloak, new_access_token),
+         # TODO: configure target audience
+         :ok <- JwtHelpers.validate_claims(access_claims, "babetti") do
       Logger.debug("[RefreshTokenAuth]: Refresh token found in cookie and tokens fetched from keycloak and put into session")
 
       conn

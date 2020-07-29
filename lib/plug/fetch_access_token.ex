@@ -7,6 +7,7 @@ defmodule WebAuth.Plug.FetchAccessToken do
 
   alias Plug.Conn
   alias WebAuth.Tokens
+  alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
     Keyword.fetch!(params, :fetch_from)
@@ -25,7 +26,9 @@ defmodule WebAuth.Plug.FetchAccessToken do
   def call(conn, target) when is_atom(target) do
     with false <- Tokens.access_claims_in_private?(conn),
          {:ok, token} <- fetch_access_token(conn, target),
-         {:ok, access_claims} <- verify_access_token(token) do
+         {:ok, access_claims} <- verify_access_token(token),
+         # TODO: add audience as params
+         :ok <- JwtHelpers.validate_claims(access_claims, "babetti") do
       conn
       |> Tokens.put_claims_into_private(nil, access_claims)
     else
