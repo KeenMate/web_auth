@@ -1,7 +1,7 @@
 defmodule WebAuth.Helpers.JwtHelpers do
   def validate_claims(%{"exp" => exp, "aud" => aud}, valid_audience) when is_binary(valid_audience) do
     with true <- not_expired?(exp),
-        #  true <- valid_audience?(aud, valid_audience) do
+         true <- valid_audience?(aud, valid_audience) do
       :ok
     else
       _ -> :error

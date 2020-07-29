@@ -10,25 +10,27 @@ defmodule WebAuth.Plug.FetchAccessToken do
   alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
-    Keyword.fetch!(params, :fetch_from)
+    %{
+      audience: Keyword.fetch!(params, :audience),
+      fetch_from: Keyword.fetch!(params, :fetch_from),
+    }
   end
 
-  def call(conn, []) do
+  def call(conn, %{fetch_from: []}) do
     conn
   end
 
-  def call(conn, [target | rest]) do
+  def call(conn, %{fetch_from: [target | rest]} = params) do
     conn
-    |> call(target)
-    |> call(rest)
+    |> call(%{params | fetch_from: target})
+    |> call(%{params | fetch_from: rest})
   end
 
-  def call(conn, target) when is_atom(target) do
+  def call(conn, %{audience: audience, fetch_from: target}) when is_binary(audience) and is_atom(target) do
     with false <- Tokens.access_claims_in_private?(conn),
          {:ok, token} <- fetch_access_token(conn, target),
          {:ok, access_claims} <- verify_access_token(token),
-         # TODO: add audience as params
-         :ok <- JwtHelpers.validate_claims(access_claims, "babetti") do
+         :ok <- JwtHelpers.validate_claims(access_claims, audience) do
       conn
       |> Tokens.put_claims_into_private(nil, access_claims)
     else
