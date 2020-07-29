@@ -1,18 +1,5 @@
 defmodule WebAuth do
-  @moduledoc """
-  Documentation for `WebAuth`.
-  """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> WebAuth.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def save_refresh_token(conn, refresh_token, expires_in) when is_binary(refresh_token) do
+    WebAuth.Tokens.put_refresh_token_in_cookie(conn, refresh_token, expires_in)
   end
 end
