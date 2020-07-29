@@ -10,7 +10,9 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
-    params
+    %{
+      audience: Keyword.fetch!(params, :audience)
+    }
   end
 
   def call(
@@ -27,13 +29,9 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   end
 
   # todo: Make sure that no redundant operations are involved
-  def call(conn, _params) do
+  def call(conn, %{audience: audience}) when is_binary(audience) do
     Logger.debug("[RefreshTokenAuth]: Claims not found in private. Circus is about to happen")
 
-    refresh_token_circus(conn)
-  end
-
-  defp refresh_token_circus(conn) do
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
          {:ok, refresh_token} when is_binary(refresh_token) <- Map.fetch(conn.req_cookies, refresh_cookie_key),
          {:ok, tokens} <- get_tokens(refresh_token),
@@ -42,8 +40,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
          {:ok, new_access_token} <- Map.fetch(tokens, "access_token"),
          #  {:ok, id_claims} <- OpenIDConnect.verify(:keycloak, tokens["id_token"]),
          {:ok, access_claims} <- OpenIDConnect.verify(:keycloak, new_access_token),
-         # TODO: configure target audience
-         :ok <- JwtHelpers.validate_claims(access_claims, "babetti") do
+         :ok <- JwtHelpers.validate_claims(access_claims, audience) do
       Logger.debug("[RefreshTokenAuth]: Refresh token found in cookie and tokens fetched from keycloak and put into session")
 
       conn
