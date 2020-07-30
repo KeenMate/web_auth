@@ -7,7 +7,6 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
 
   alias Plug.Conn
   alias WebAuth.Tokens
-  alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
     params

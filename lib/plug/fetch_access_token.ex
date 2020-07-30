@@ -24,7 +24,7 @@ defmodule WebAuth.Plug.FetchAccessToken do
     |> call(%{params | fetch_from: rest})
   end
 
-  def call(conn, %{audience: audience, fetch_from: target}) when is_binary(audience) and is_atom(target) do
+  def call(conn, %{fetch_from: target}) when is_atom(target) do
     with false <- Tokens.access_claims_in_private?(conn),
          {:ok, token} <- fetch_access_token(conn, target),
          {:ok, access_claims} <- Tokens.verify_token(token) do
