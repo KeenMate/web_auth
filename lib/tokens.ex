@@ -83,9 +83,9 @@ defmodule WebAuth.Tokens do
   @spec put_tokens_into_session(Conn.t(), map()) :: Conn.t()
   def put_tokens_into_session(conn, tokens) do
     conn
-    |> put_id_token_into_session(tokens)
+    # |> put_id_token_into_session(tokens)
     |> put_access_token_into_session(tokens)
-    |> put_refresh_token_into_session(tokens)
+    # |> put_refresh_token_into_session(tokens)
   end
 
   @doc """
