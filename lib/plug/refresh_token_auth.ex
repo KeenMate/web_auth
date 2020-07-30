@@ -10,9 +10,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
-    %{
-      audience: Keyword.fetch!(params, :audience)
-    }
+    params
   end
 
   def call(
@@ -29,7 +27,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   end
 
   # todo: Make sure that no redundant operations are involved
-  def call(conn, %{audience: audience}) when is_binary(audience) do
+  def call(conn, _params) do
     Logger.debug("[RefreshTokenAuth]: Claims not found in private. Circus is about to happen")
 
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
