@@ -16,6 +16,18 @@ defmodule WebAuth.Tokens do
 
   @type claims() :: map() | nil
 
+  def remove_claims_from_private(conn) do
+    update_in(conn.private, &Map.drop(&1, [@access_claims_key]))
+  end
+
+  def verify_token("Bearer " <> token) when is_binary(token) do
+    verify_token(token)
+  end
+
+  def verify_token(token) when is_binary(token) do
+    OpenIDConnect.verify(:keycloak, token)
+  end
+
   def get_id_token_from_session(conn) do
     conn
     |> Conn.get_session(@id_token_key)

@@ -7,12 +7,10 @@ defmodule WebAuth.Plug.FetchAccessToken do
 
   alias Plug.Conn
   alias WebAuth.Tokens
-  alias WebAuth.Helpers.JwtHelpers
 
   def init(params) do
     %{
-      audience: Keyword.fetch!(params, :audience),
-      fetch_from: Keyword.fetch!(params, :fetch_from),
+      fetch_from: Keyword.fetch!(params, :fetch_from)
     }
   end
 
@@ -29,8 +27,7 @@ defmodule WebAuth.Plug.FetchAccessToken do
   def call(conn, %{audience: audience, fetch_from: target}) when is_binary(audience) and is_atom(target) do
     with false <- Tokens.access_claims_in_private?(conn),
          {:ok, token} <- fetch_access_token(conn, target),
-         {:ok, access_claims} <- verify_access_token(token),
-         :ok <- JwtHelpers.validate_claims(access_claims, audience) do
+         {:ok, access_claims} <- Tokens.verify_token(token) do
       conn
       |> Tokens.put_claims_into_private(nil, access_claims)
     else
@@ -55,13 +52,5 @@ defmodule WebAuth.Plug.FetchAccessToken do
       nil -> :error
       token -> {:ok, token}
     end
-  end
-
-  defp verify_access_token("Bearer " <> token) do
-    verify_access_token(token)
-  end
-
-  defp verify_access_token(token) when is_binary(token) do
-    OpenIDConnect.verify(:keycloak, token)
   end
 end

@@ -39,8 +39,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
          {:ok, refresh_token_expiration} <- Map.fetch(tokens, "refresh_expires_in"),
          {:ok, new_access_token} <- Map.fetch(tokens, "access_token"),
          #  {:ok, id_claims} <- OpenIDConnect.verify(:keycloak, tokens["id_token"]),
-         {:ok, access_claims} <- OpenIDConnect.verify(:keycloak, new_access_token),
-         :ok <- JwtHelpers.validate_claims(access_claims, audience) do
+         {:ok, access_claims} <- Tokens.verify_token(new_access_token) do
       Logger.debug("[RefreshTokenAuth]: Refresh token found in cookie and tokens fetched from keycloak and put into session")
 
       conn
