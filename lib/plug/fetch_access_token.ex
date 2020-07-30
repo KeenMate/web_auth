@@ -10,7 +10,8 @@ defmodule WebAuth.Plug.FetchAccessToken do
 
   def init(params) do
     %{
-      fetch_from: Keyword.fetch!(params, :fetch_from)
+      fetch_from: Keyword.fetch!(params, :fetch_from),
+      oidc_name: Keyword.fetch!(params, :oidc_name)
     }
   end
 
@@ -24,10 +25,10 @@ defmodule WebAuth.Plug.FetchAccessToken do
     |> call(%{params | fetch_from: rest})
   end
 
-  def call(conn, %{fetch_from: target}) when is_atom(target) do
+  def call(conn, %{fetch_from: target, oidc_name: oidc_name}) when is_atom(target) do
     with false <- Tokens.access_claims_in_private?(conn),
          {:ok, token} <- fetch_access_token(conn, target),
-         {:ok, access_claims} <- Tokens.verify_token(token) do
+         {:ok, access_claims} <- Tokens.verify_token(token, oidc_name) do
       conn
       |> Tokens.put_claims_into_private(nil, access_claims)
     else

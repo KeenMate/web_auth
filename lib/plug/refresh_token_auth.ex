@@ -9,7 +9,9 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   alias WebAuth.Tokens
 
   def init(params) do
-    params
+    %{
+      oidc_name: Keyword.fetch!(params, :oidc_name)
+    }
   end
 
   def call(
@@ -26,17 +28,17 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   end
 
   # todo: Make sure that no redundant operations are involved
-  def call(conn, _params) do
+  def call(conn, %{oidc_name: oidc_name}) do
     Logger.debug("[RefreshTokenAuth]: Claims not found in private. Circus is about to happen")
 
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
          {:ok, refresh_token} when is_binary(refresh_token) <- Map.fetch(conn.req_cookies, refresh_cookie_key),
-         {:ok, tokens} <- get_tokens(refresh_token),
+         {:ok, tokens} <- get_tokens(refresh_token, oidc_name),
          {:ok, new_refresh_token} <- Map.fetch(tokens, "refresh_token"),
          {:ok, refresh_token_expiration} <- Map.fetch(tokens, "refresh_expires_in"),
          {:ok, new_access_token} <- Map.fetch(tokens, "access_token"),
          #  {:ok, id_claims} <- OpenIDConnect.verify(:keycloak, tokens["id_token"]),
-         {:ok, access_claims} <- Tokens.verify_token(new_access_token) do
+         {:ok, access_claims} <- Tokens.verify_token(new_access_token, oidc_name) do
       Logger.debug("[RefreshTokenAuth]: Refresh token found in cookie and tokens fetched from keycloak and put into session")
 
       conn
@@ -51,14 +53,15 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
     end
   end
 
-  defp get_tokens(refresh_token) when is_binary(refresh_token) do
+  defp get_tokens(refresh_token, oidc_name) when is_binary(refresh_token) do
     with {:ok, tokens} <-
            OpenIDConnect.fetch_tokens(
              :keycloak,
              %{
                grant_type: "refresh_token",
                refresh_token: refresh_token
-             }
+             },
+             oidc_name
            ) do
       {:ok, tokens}
     end
