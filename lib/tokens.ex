@@ -22,12 +22,12 @@ defmodule WebAuth.Tokens do
 
   def verify_token(token, oidc_name \\ :openid_connect)
 
-  def verify_token(token, oidc_name) when is_binary(token) do
-    OpenIDConnect.verify(:keycloak, token, oidc_name)
-  end
-
   def verify_token("Bearer " <> token, oidc_name) when is_binary(token) do
     verify_token(token, oidc_name)
+  end
+
+  def verify_token(token, oidc_name) when is_binary(token) do
+    OpenIDConnect.verify(:keycloak, token, oidc_name)
   end
 
   def get_id_token_from_session(conn) do
