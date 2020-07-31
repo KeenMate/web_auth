@@ -15,7 +15,7 @@ defmodule WebAuth.Plug.ValidateAccessToken do
       case JwtHelpers.validate_claims(Tokens.get_access_claims_from_private(conn), audience) do
         :ok -> conn
         # invalid claims, removing from conn
-        :error ->
+        {:error, _} ->
           Logger.debug("[ValidateAccessToken] Claims invalid, removing from conn")
           Tokens.remove_claims_from_private(conn)
       end
