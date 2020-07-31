@@ -16,6 +16,8 @@ defmodule WebAuth.Helpers.JwtHelpers do
     {:ok, exp_date} = DateTime.from_unix(expiration, :second, Calendar.ISO)
     current_date = DateTime.now!("Etc/UTC")
 
+    Logger.debug("JWT expiration: #{expiration}, JWT date: #{exp_date}, current date: #{current_date}")
+
     if DateTime.diff(exp_date, current_date) > 0 do
       :ok
     else

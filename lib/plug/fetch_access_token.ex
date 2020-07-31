@@ -29,6 +29,8 @@ defmodule WebAuth.Plug.FetchAccessToken do
     with false <- Tokens.access_claims_in_private?(conn),
          {:ok, token} <- fetch_access_token(conn, target),
          {:ok, access_claims} <- Tokens.verify_token(token, oidc_name) do
+      Logger.debug("[FetchAccessToken] Token signature valid, saving into conn.private")
+
       conn
       |> Tokens.put_claims_into_private(nil, access_claims)
     else
@@ -43,7 +45,9 @@ defmodule WebAuth.Plug.FetchAccessToken do
 
   defp fetch_access_token(conn, :header) do
     case Conn.get_req_header(conn, "authorization") do
-      [bearer_token | []] when is_binary(bearer_token) -> {:ok, bearer_token}
+      [bearer_token | []] when is_binary(bearer_token) ->
+        Logger.debug("[FetchAccessToken] Access token found in authorization header")
+        {:ok, bearer_token}
       _ -> :error
     end
   end
@@ -51,7 +55,9 @@ defmodule WebAuth.Plug.FetchAccessToken do
   defp fetch_access_token(conn, :session) do
     case Tokens.get_access_token_from_session(conn) do
       nil -> :error
-      token -> {:ok, token}
+      token ->
+        Logger.debug("[FetchAccessToken] Access token found in session")
+        {:ok, token}
     end
   end
 end

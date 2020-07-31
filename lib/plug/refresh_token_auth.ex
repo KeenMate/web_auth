@@ -22,14 +22,12 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
         } = conn,
         _params
       ) do
-    Logger.debug("[RefreshTokenAuth]: Claims found in private. No refresh token circus made")
-
     conn
   end
 
   # todo: Make sure that no redundant operations are involved
   def call(conn, %{oidc_name: oidc_name}) do
-    Logger.debug("[RefreshTokenAuth]: Claims not found in private. Circus is about to happen")
+    Logger.debug("[RefreshTokenAuth] No claims found, retrieving new access token")
 
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
          {:ok, refresh_token} when is_binary(refresh_token) <- Map.fetch(conn.req_cookies, refresh_cookie_key),
@@ -47,7 +45,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
       |> Tokens.put_claims_into_private(nil, access_claims)
     else
       err ->
-        Logger.warn("[RefreshTokenAuth]: Circus might've ended prematurely. Reason: #{inspect(err)}")
+        Logger.warn("[RefreshTokenAuth] Refresh error. Reason: #{inspect(err)}")
 
         conn
     end
