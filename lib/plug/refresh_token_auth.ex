@@ -27,11 +27,12 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
 
   # todo: Make sure that no redundant operations are involved
   def call(conn, %{oidc_name: oidc_name}) do
-    Logger.debug("[RefreshTokenAuth] No claims found, retrieving new access token")
+    Logger.debug("[RefreshTokenAuth][Konik]: No claims found, retrieving new access token")
 
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
          {:ok, refresh_token} when is_binary(refresh_token) <- Map.fetch(conn.req_cookies, refresh_cookie_key),
          {:ok, tokens} <- get_tokens(refresh_token, oidc_name),
+         #  _ <- IO.inspect(tokens, label: "Given tokens are: "),
          {:ok, new_refresh_token} <- Map.fetch(tokens, "refresh_token"),
          {:ok, refresh_token_expiration} <- Map.fetch(tokens, "refresh_expires_in"),
          {:ok, new_access_token} <- Map.fetch(tokens, "access_token"),
@@ -52,6 +53,8 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   end
 
   defp get_tokens(refresh_token, oidc_name) when is_binary(refresh_token) do
+    Logger.debug("Getting tokens from refresh token: #{inspect(refresh_token)}")
+
     with {:ok, tokens} <-
            OpenIDConnect.fetch_tokens(
              :keycloak,
