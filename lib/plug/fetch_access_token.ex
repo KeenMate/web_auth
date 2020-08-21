@@ -37,8 +37,8 @@ defmodule WebAuth.Plug.FetchAccessToken do
       true ->
         conn
 
-      _ ->
-        Logger.debug("[AccessTokenAuth]: Acess token not found or invalid")
+      all_else ->
+        Logger.debug("[AccessTokenAuth]: Acess token not found or invalid. reason: #{inspect(all_else)}")
         conn
     end
   end
