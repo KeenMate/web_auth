@@ -37,8 +37,12 @@ defmodule WebAuth.Plug.FetchAccessToken do
       true ->
         conn
 
+      {:error, :verify, msg} ->
+        Logger.error("[FetchAccessToken]: Error occured while verifying access token. Message: #{inspect(msg)}")
+        conn
+
       all_else ->
-        Logger.debug("[AccessTokenAuth]: Acess token not found or invalid. reason: #{inspect(all_else)}")
+        Logger.debug("[FetchAccessToken]: Acess token not found or invalid. reason: #{inspect(all_else)}")
         conn
     end
   end
