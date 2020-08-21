@@ -1,8 +1,6 @@
 defmodule WebAuth.Token do
   require Logger
 
-  alias WebAuth.Helpers.JwtHelpers
-
   def refresh(refresh_token, client) when is_binary(refresh_token) do
     OpenIDConnect.fetch_tokens(client, %{grant_type: "refresh_token", refresh_token: refresh_token})
   end
