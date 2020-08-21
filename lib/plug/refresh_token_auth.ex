@@ -32,9 +32,8 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
          {:ok, refresh_token} when is_binary(refresh_token) <- Map.fetch(conn.req_cookies, refresh_cookie_key),
          {:ok, tokens} <- get_tokens(refresh_token, oidc_name),
-         #  _ <- IO.inspect(tokens, label: "Given tokens are: "),
-         {:ok, new_refresh_token} <- Map.fetch(tokens, "refresh_token"),
          {:ok, refresh_token_expiration} <- Map.fetch(tokens, "refresh_expires_in"),
+         {:ok, new_refresh_token} <- Map.fetch(tokens, "refresh_token"),
          {:ok, new_access_token} <- Map.fetch(tokens, "access_token"),
          #  {:ok, id_claims} <- OpenIDConnect.verify(:keycloak, tokens["id_token"]),
          {:ok, access_claims} <- Tokens.verify_token(new_access_token, oidc_name) do

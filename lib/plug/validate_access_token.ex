@@ -16,7 +16,7 @@ defmodule WebAuth.Plug.ValidateAccessToken do
         :ok -> conn
         # invalid claims, removing from conn
         {:error, reason} ->
-          Logger.debug("[ValidateAccessToken] Claims invalid: #{reason}")
+          Logger.debug("[ValidateAccessToken] Claims invalid: #{inspect(reason)}")
           Tokens.remove_claims_from_private(conn)
       end
     else
