@@ -1,6 +1,10 @@
 defmodule WebAuth.Claims do
   require Logger
 
+  def validate(_claims, [], _client) do
+    :ok
+  end
+
   def validate(claims, [validation | rest], client) when is_map(claims) do
     with :ok <- validate(claims, validation, client) do
       validate(claims, rest, client)
@@ -20,7 +24,19 @@ defmodule WebAuth.Claims do
     end
   end
 
-  def validate(%{"aud" => audience}, {:aud, target_audience}, _client) when is_binary(audience) and is_binary(target_audience) do
+  def validate(%{"aud" => audience}, {:aud, target_audience}, client) do
+    validate_audience(audience, target_audience, client)
+  end
+
+  defp validate_audience([audience | rest], target_audience, client) when is_binary(audience) and is_binary(target_audience) do
+    if validate_audience(audience, target_audience, client) == :ok do
+      :ok
+    else
+      validate_audience(rest, target_audience, client)
+    end
+  end
+
+  defp validate_audience(audience, target_audience, _client) when is_binary(audience) and is_binary(target_audience) do
     if audience == target_audience do
       :ok
     else
