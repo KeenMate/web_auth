@@ -12,6 +12,20 @@ defmodule WebAuth.Helpers.JwtHelpers do
     end
   end
 
+  def token_expiration(token) do
+    with {:ok, %{"exp" => exp}} <- decode_paylod(token) do
+      exp
+    end
+  end
+
+  defp decode_paylod(token) when is_binary(token) do
+    with [_algorithm, payload, _signature] <- String.split(token, "."),
+         {:ok, decoded_payload} <- Base.url_decode64(payload, padding: false),
+         {:ok, claims} <- Jason.decode(decoded_payload) do
+      {:ok, claims}
+    end
+  end
+
   defp not_expired?(expiration) when is_number(expiration) do
     {:ok, exp_date} = DateTime.from_unix(expiration, :second, Calendar.ISO)
     current_date = DateTime.now!("Etc/UTC")
