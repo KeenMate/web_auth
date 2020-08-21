@@ -6,26 +6,24 @@ defmodule WebAuth.Plug.ExtractRoles do
   require Logger
 
   alias Plug.Conn
-  alias WebAuth.Tokens
+  alias WebAuth.Request
 
-  @type opts() :: %{client_id: String.t()}
-
-  @spec init(keyword()) :: opts()
   def init(opts) do
-    %{
-      client_id: Keyword.fetch!(opts, :client_id)
-    }
+    %{client: Keyword.fetch!(opts, :client)}
   end
 
-  def call(conn, %{client_id: client_id}) do
-    with true <- Tokens.access_claims_in_private?(conn),
-         claims when not is_nil(claims) <- Tokens.get_access_claims_from_private(conn),
-         extracted_roles when not is_nil(extracted_roles) <-
-           get_in(claims, ["resource_access", client_id, "roles"]) do
-      conn
-      |> Conn.assign(:user_roles, extracted_roles)
+  def call(conn, %{client: client}) do
+    with true <- Request.has_claims?(conn, client),
+         claims <- Request.get_claims(conn, client),
+         extracted_roles when not is_nil(extracted_roles) <- get_in(claims, ["resource_access", client_id(client), "roles"]) do
+      Conn.assign(conn, :user_roles, extracted_roles)
     else
       _ -> conn
     end
+  end
+
+  defp client_id(client) do
+    Application.get_env(:web_auth, :clients)
+    |> get_in([client, :oidc, :client_id])
   end
 end

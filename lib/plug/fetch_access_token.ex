@@ -5,13 +5,14 @@ defmodule WebAuth.Plug.FetchAccessToken do
 
   require Logger
 
-  alias Plug.Conn
-  alias WebAuth.Tokens
+  alias WebAuth.Token
+  alias WebAuth.Session
+  alias WebAuth.Request
 
   def init(params) do
     %{
       fetch_from: Keyword.fetch!(params, :fetch_from),
-      oidc_name: Keyword.fetch!(params, :oidc_name)
+      client: Keyword.fetch!(params, :client)
     }
   end
 
@@ -25,14 +26,14 @@ defmodule WebAuth.Plug.FetchAccessToken do
     |> call(%{params | fetch_from: rest})
   end
 
-  def call(conn, %{fetch_from: target, oidc_name: oidc_name}) when is_atom(target) do
-    with false <- Tokens.access_claims_in_private?(conn),
-         {:ok, token} <- fetch_access_token(conn, target),
-         {:ok, access_claims} <- Tokens.verify_token(token, oidc_name) do
+  def call(conn, %{fetch_from: target, client: client}) when is_atom(target) do
+    with false <- Request.has_claims?(conn, client),
+         {:ok, token} <- fetch_access_token(conn, client, target),
+         {:ok, claims} <- Token.verify(token, client) do
       Logger.debug("[FetchAccessToken] Token signature valid, saving into conn.private")
 
       conn
-      |> Tokens.put_claims_into_private(nil, access_claims)
+      |> Request.put_claims(claims, client)
     else
       true ->
         conn
@@ -47,21 +48,14 @@ defmodule WebAuth.Plug.FetchAccessToken do
     end
   end
 
-  defp fetch_access_token(conn, :header) do
-    case Conn.get_req_header(conn, "authorization") do
-      [bearer_token | []] when is_binary(bearer_token) ->
-        Logger.debug("[FetchAccessToken] Access token found in authorization header")
-        {:ok, bearer_token}
-      _ -> :error
-    end
+  defp fetch_access_token(conn, client, :header) do
+    Request.fetch_bearer_token(conn, client)
   end
 
-  defp fetch_access_token(conn, :session) do
-    case Tokens.get_access_token_from_session(conn) do
+  defp fetch_access_token(conn, client, :session) do
+    case Session.get_access_token(conn, client) do
       nil -> :error
-      token ->
-        Logger.debug("[FetchAccessToken] Access token found in session")
-        {:ok, token}
+      token -> {:ok, token}
     end
   end
 end

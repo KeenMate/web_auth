@@ -17,8 +17,7 @@ defmodule WebAuth.Plug.EnsureRoles do
   @spec init(keyword()) :: opts()
   def init(opts) do
     %{
-      roles: Keyword.get(opts, :roles, [])
-             |> Enum.map(&normalize_role/1),
+      roles: Keyword.get(opts, :roles, []) |> Enum.map(&normalize_role/1),
       operation: Keyword.get(opts, :op, @default_operation)
     }
   end
@@ -30,9 +29,7 @@ defmodule WebAuth.Plug.EnsureRoles do
 
   def call(conn, %{roles: roles, operation: op}) do
     with {:ok, extracted_roles} <- Map.fetch(conn.assigns, :user_roles) do
-      Logger.info(
-        "Extracted roles: #{inspect(extracted_roles)}. Roles to ensure: #{inspect(roles)}"
-      )
+      Logger.info("Extracted roles: #{inspect(extracted_roles)}. Roles to ensure: #{inspect(roles)}")
 
       extracted_roles
       |> check_roles(op, roles)
@@ -42,25 +39,25 @@ defmodule WebAuth.Plug.EnsureRoles do
     end
   end
 
-#  def call(conn, %{roles: roles, operation: op, client_id: client_id}) when is_binary(client_id) do
-#    with claims when not is_nil(claims) <- get_access_claims(conn),
-#         extracted_roles when not is_nil(extracted_roles) <-
-#           get_in(claims, ["resource_access", client_id, "roles"]) do
-#      Logger.info(
-#        "Extracted roles: #{inspect(extracted_roles)}. Roles to ensure: #{inspect(roles)}"
-#      )
-#
-#      extracted_roles
-#      |> check_roles(op, roles)
-#      |> handle_authorization(conn, extracted_roles)
-#    else
-#      _ -> set_forbidden(conn)
-#    end
-#  end
+  #  def call(conn, %{roles: roles, operation: op, client_id: client_id}) when is_binary(client_id) do
+  #    with claims when not is_nil(claims) <- get_access_claims(conn),
+  #         extracted_roles when not is_nil(extracted_roles) <-
+  #           get_in(claims, ["resource_access", client_id, "roles"]) do
+  #      Logger.info(
+  #        "Extracted roles: #{inspect(extracted_roles)}. Roles to ensure: #{inspect(roles)}"
+  #      )
+  #
+  #      extracted_roles
+  #      |> check_roles(op, roles)
+  #      |> handle_authorization(conn, extracted_roles)
+  #    else
+  #      _ -> set_forbidden(conn)
+  #    end
+  #  end
 
-#  defp get_access_claims(conn) do
-#    Tokens.get_access_claims_from_private(conn) || Tokens.get_access_claims_from_session(conn)
-#  end
+  #  defp get_access_claims(conn) do
+  #    Tokens.get_access_claims_from_private(conn) || Tokens.get_access_claims_from_session(conn)
+  #  end
 
   defp handle_authorization(true, conn, extracted_roles) do
     conn
@@ -115,7 +112,6 @@ defmodule WebAuth.Plug.EnsureRoles do
   end
 
   defp set_forbidden(conn) do
-    conn
-    |> Conn.put_status(403)
+    Conn.put_status(conn, 403)
   end
 end
