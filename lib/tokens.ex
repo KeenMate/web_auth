@@ -168,27 +168,27 @@ defmodule WebAuth.Tokens do
     )
   end
 
-  defp put_id_token_into_session(conn, %{"id_token" => token}) do
-    conn
-    |> Conn.put_session(@id_token_key, token)
-  end
+  # defp put_id_token_into_session(conn, %{"id_token" => token}) do
+  #   conn
+  #   |> Conn.put_session(@id_token_key, token)
+  # end
 
-  defp put_id_token_into_session(conn, _tokens) do
-    Logger.warn("Key 'id_token' was not found in tokens map while storing them inside conn's session")
+  # defp put_id_token_into_session(conn, _tokens) do
+  #   Logger.warn("Key 'id_token' was not found in tokens map while storing them inside conn's session")
 
-    conn
-  end
+  #   conn
+  # end
 
-  defp put_refresh_token_into_session(conn, %{"refresh_token" => token}) do
-    conn
-    |> Conn.put_session(@refresh_token_key, token)
-  end
+  # defp put_refresh_token_into_session(conn, %{"refresh_token" => token}) do
+  #   conn
+  #   |> Conn.put_session(@refresh_token_key, token)
+  # end
 
-  defp put_refresh_token_into_session(conn, _tokens) do
-    Logger.warn("Key 'refresh_token' was not found in tokens map while storing them inside conn's session")
+  # defp put_refresh_token_into_session(conn, _tokens) do
+  #   Logger.warn("Key 'refresh_token' was not found in tokens map while storing them inside conn's session")
 
-    conn
-  end
+  #   conn
+  # end
 
   def put_access_token_into_session(conn, %{"access_token" => token}) do
     put_access_token_into_session(conn, token)
