@@ -30,6 +30,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
     Logger.debug("[RefreshTokenAuth] No claims found, retrieving new access token")
 
     with refresh_cookie_key <- Application.get_env(:babetti_web, :refresh_token_cookie, "rt"),
+         _ <- Logger.debug("[RefreshTokenAuth]: conn's cookies: #{inspect(conn.req_cookies)}"),
          {:ok, refresh_token} when is_binary(refresh_token) <- Map.fetch(conn.req_cookies, refresh_cookie_key),
          _ <- Logger.debug("[RefreshTokenAuth]: refresh token fetched from cookie"),
          {:ok, tokens} <- get_tokens(refresh_token, oidc_name),
