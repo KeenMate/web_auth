@@ -17,6 +17,7 @@ defmodule WebAuth.Plug.EnsureAuthenticated do
     if Request.has_claims?(conn, client) do
       conn
     else
+      Logger.debug("[EnsureAuthenticated] No claims in conn, setting 401 resp")
       Conn.put_status(conn, 401)
     end
   end
