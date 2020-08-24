@@ -15,20 +15,22 @@ defmodule WebAuth.Plug.ExtractRoles do
   def call(conn, %{client: client}) do
     with true <- Request.has_claims?(conn, client),
          claims <- Request.get_claims(conn, client),
-         {:ok, roles} <- extract_roles_from_claims(claims, client) do
+         {:ok, roles} <- extract_roles_from_claims(claims, client_id(client)) do
       Conn.assign(conn, :user_roles, roles)
     else
       _ -> conn
     end
   end
 
-  defp client_id(client) do
+  defp client_id(client) when is_atom(client) do
     Application.get_env(:web_auth, :clients)
     |> get_in([client, :oidc, :client_id])
   end
 
-  defp extract_roles_from_claims(claims, client) do
-    case get_in(claims, ["resource_access", client_id(client), "roles"]) do
+  defp client_id(client) when is_binary(client), do: client
+
+  defp extract_roles_from_claims(claims, client_id) do
+    case get_in(claims, ["resource_access", client_id, "roles"]) do
       nil -> {:error, :no_roles_found}
       roles -> {:ok, roles}
     end
