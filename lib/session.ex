@@ -36,20 +36,20 @@ defmodule WebAuth.Session do
     |> delete_refresh_token(client)
   end
 
-  def get_access_token(conn, _client) do
-    Conn.get_session(conn, @access_token_key)
+  def get_access_token(conn, client) do
+    Conn.get_session(conn, session_key(client))
   end
 
   defp put_access_token(conn, %{"access_token" => access_token}, client) do
     put_access_token(conn, access_token, client)
   end
 
-  defp put_access_token(conn, access_token, _client) when is_binary(access_token) do
-    Conn.put_session(conn, @access_token_key, access_token)
+  defp put_access_token(conn, access_token, client) when is_binary(access_token) do
+    Conn.put_session(conn, session_key(client), access_token)
   end
 
-  defp delete_access_token(conn, _client) do
-    Conn.delete_session(conn, @access_token_key)
+  defp delete_access_token(conn, client) do
+    Conn.delete_session(conn, session_key(client))
   end
 
   def get_refresh_token(conn, client) do
@@ -78,5 +78,9 @@ defmodule WebAuth.Session do
 
   def cookie_key(client) do
     get_in(Application.get_env(:web_auth, :clients), [client, :refresh_token_cookie_key]) || Atom.to_string(client) <> "_rt"
+  end
+
+  defp session_key(client) do
+    Atom.to_string(@access_token_key) <> "_" <> Atom.to_string(client)
   end
 end
