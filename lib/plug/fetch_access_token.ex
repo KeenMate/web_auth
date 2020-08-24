@@ -36,14 +36,15 @@ defmodule WebAuth.Plug.FetchAccessToken do
       |> Request.put_claims(claims, client)
     else
       true ->
+        Logger.debug("[FetchAccessToken] (#{target}): Claims already fetched, skipping")
         conn
 
       {:error, :verify, msg} ->
-        Logger.error("[FetchAccessToken]: Error occured while verifying access token. Message: #{inspect(msg)}")
+        Logger.error("[FetchAccessToken] (#{target}): Error occured while verifying access token. Message: #{inspect(msg)}")
         conn
 
       all_else ->
-        Logger.debug("[FetchAccessToken]: Acess token not found or invalid. reason: #{inspect(all_else)}")
+        Logger.debug("[FetchAccessToken] (#{target}): Acess token not found or invalid. reason: #{inspect(all_else)}")
         conn
     end
   end
