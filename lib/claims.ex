@@ -36,6 +36,10 @@ defmodule WebAuth.Claims do
     end
   end
 
+  defp validate_audience([], _target_audience, _client) do
+    {:error, :no_audience_found}
+  end
+
   defp validate_audience(audience, target_audience, _client) when is_binary(audience) and is_binary(target_audience) do
     if audience == target_audience do
       :ok

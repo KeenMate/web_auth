@@ -21,7 +21,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   def call(conn, %{client: client}) do
     Logger.debug("[RefreshTokenAuth] No claims found, retrieving new access token")
 
-    with {:ok, refresh_token} when is_binary(refresh_token) <- Session.get_refresh_token(conn, client),
+    with refresh_token when is_binary(refresh_token) <- Session.get_refresh_token(conn, client),
          {:ok, tokens} <- Token.refresh(refresh_token, client) do
       Session.create(conn, tokens, client)
     else
