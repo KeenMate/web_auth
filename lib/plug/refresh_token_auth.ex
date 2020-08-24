@@ -25,9 +25,12 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
          {:ok, tokens} <- Token.refresh(refresh_token, client) do
       Session.create(conn, tokens, client)
     else
+      nil ->
+        Logger.debug("[RefreshTokenAuth] No refresh token in cookie, skipping")
+        conn
+
       err ->
         Logger.warn("[RefreshTokenAuth] Refresh error. Reason: #{inspect(err)}")
-
         conn
     end
   end
