@@ -8,6 +8,7 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   alias Plug.Conn
   alias WebAuth.Session
   alias WebAuth.Token
+  alias WebAuth.Request
 
   def init(params) do
     %{client: Keyword.fetch!(params, :client)}
@@ -22,8 +23,11 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
     Logger.debug("[RefreshTokenAuth] No claims found, retrieving new access token")
 
     with refresh_token when is_binary(refresh_token) <- Session.get_refresh_token(conn, client),
-         {:ok, tokens} <- Token.refresh(refresh_token, client) do
-      Session.create(conn, tokens, client)
+         {:ok, tokens} <- Token.refresh(refresh_token, client),
+         {:ok, claims} <- Token.verify(tokens["access_token"], client) do
+      conn
+      |> Session.create(tokens, client)
+      |> Request.put_claims(claims, client)
     else
       nil ->
         Logger.debug("[RefreshTokenAuth] No refresh token in cookie, skipping")
