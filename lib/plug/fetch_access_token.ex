@@ -1,13 +1,13 @@
-defmodule WebAuth.Plug.FetchAccessToken do
+defmodule KeenAuth.Plug.FetchAccessToken do
   @moduledoc """
   Plug that verifies refresh token (if exists, redirects to login page otherwise) using openid connect
   """
 
   require Logger
 
-  alias WebAuth.Token
-  alias WebAuth.Session
-  alias WebAuth.Request
+  alias KeenAuth.Token
+  alias KeenAuth.Session
+  alias KeenAuth.Request
 
   def init(params) do
     %{

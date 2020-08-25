@@ -1,4 +1,4 @@
-defmodule WebAuth.Supervisor do
+defmodule KeenAuth.Supervisor do
   use Supervisor
 
   def start_link(_) do
@@ -15,7 +15,7 @@ defmodule WebAuth.Supervisor do
   end
 
   defp generate_openid_configuration() do
-    Application.get_env(:web_auth, :clients)
+    Application.get_env(:keen_auth, :clients)
     |> Enum.map(fn {client, config} -> {client, config[:oidc]} end)
   end
 end

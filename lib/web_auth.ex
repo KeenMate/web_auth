@@ -1,2 +1,2 @@
-defmodule WebAuth do
+defmodule KeenAuth do
 end

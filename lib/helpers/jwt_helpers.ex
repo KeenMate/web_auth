@@ -1,4 +1,4 @@
-defmodule WebAuth.Helpers.JwtHelpers do
+defmodule KeenAuth.Helpers.JwtHelpers do
   require Logger
 
   def token_expiration(token) do

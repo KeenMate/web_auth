@@ -1,21 +1,21 @@
-# WebAuth
+# KeenAuth
 
 **TODO: Add description**
 
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `web_auth` to your list of dependencies in `mix.exs`:
+by adding `keen_auth` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:web_auth, "~> 0.1.0"}
+    {:keen_auth, "~> 0.1.0"}
   ]
 end
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/web_auth](https://hexdocs.pm/web_auth).
+be found at [https://hexdocs.pm/keen_auth](https://hexdocs.pm/keen_auth).
 

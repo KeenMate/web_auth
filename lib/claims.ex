@@ -1,4 +1,4 @@
-defmodule WebAuth.Claims do
+defmodule KeenAuth.Claims do
   require Logger
 
   def validate(_claims, [], _client) do

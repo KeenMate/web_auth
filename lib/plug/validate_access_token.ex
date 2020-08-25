@@ -1,8 +1,8 @@
-defmodule WebAuth.Plug.ValidateAccessToken do
+defmodule KeenAuth.Plug.ValidateAccessToken do
   require Logger
 
-  alias WebAuth.Request
-  alias WebAuth.Claims
+  alias KeenAuth.Request
+  alias KeenAuth.Claims
 
   def init(params) do
     %{

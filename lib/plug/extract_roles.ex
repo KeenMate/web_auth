@@ -1,4 +1,4 @@
-defmodule WebAuth.Plug.ExtractRoles do
+defmodule KeenAuth.Plug.ExtractRoles do
   @moduledoc """
   If access claims are available for conn then extracts roles claim into separate conn's private variable
   """
@@ -6,7 +6,7 @@ defmodule WebAuth.Plug.ExtractRoles do
   require Logger
 
   alias Plug.Conn
-  alias WebAuth.Request
+  alias KeenAuth.Request
 
   def init(opts) do
     %{client: Keyword.fetch!(opts, :client)}
@@ -23,7 +23,7 @@ defmodule WebAuth.Plug.ExtractRoles do
   end
 
   defp client_id(client) when is_atom(client) do
-    Application.get_env(:web_auth, :clients)
+    Application.get_env(:keen_auth, :clients)
     |> get_in([client, :oidc, :client_id])
   end
 

@@ -1,8 +1,8 @@
-defmodule WebAuth.Session do
+defmodule KeenAuth.Session do
   require Logger
   alias Plug.Conn
-  alias WebAuth.Helpers.Date
-  alias WebAuth.Helpers.JwtHelpers
+  alias KeenAuth.Helpers.Date
+  alias KeenAuth.Helpers.JwtHelpers
 
   @access_token_key :access_token
 
@@ -77,7 +77,7 @@ defmodule WebAuth.Session do
   end
 
   def cookie_key(client) do
-    get_in(Application.get_env(:web_auth, :clients), [client, :refresh_token_cookie_key]) || Atom.to_string(client) <> "_rt"
+    get_in(Application.get_env(:keen_auth, :clients), [client, :refresh_token_cookie_key]) || Atom.to_string(client) <> "_rt"
   end
 
   defp session_key(client) do

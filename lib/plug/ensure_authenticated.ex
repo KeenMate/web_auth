@@ -1,4 +1,4 @@
-defmodule WebAuth.Plug.EnsureAuthenticated do
+defmodule KeenAuth.Plug.EnsureAuthenticated do
   @moduledoc """
     Checks whether connection contains any claims in private or connection's session
     Redirects to login page otherwise
@@ -6,7 +6,7 @@ defmodule WebAuth.Plug.EnsureAuthenticated do
 
   require Logger
 
-  alias WebAuth.Request
+  alias KeenAuth.Request
   alias Plug.Conn
 
   def init(params) do

@@ -1,4 +1,4 @@
-defmodule WebAuth.Helpers.Date do
+defmodule KeenAuth.Helpers.Date do
   def diff_now(unix_timestamp, opts \\ [])
 
   def diff_now(unix_timestamp, opts) when is_number(unix_timestamp) do

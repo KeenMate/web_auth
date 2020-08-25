@@ -1,4 +1,4 @@
-defmodule WebAuth.Request do
+defmodule KeenAuth.Request do
   alias Plug.Conn
 
   @access_claims_key :access_claims

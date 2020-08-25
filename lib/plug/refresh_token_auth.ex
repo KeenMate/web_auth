@@ -1,4 +1,4 @@
-defmodule WebAuth.Plug.RefreshTokenAuth do
+defmodule KeenAuth.Plug.RefreshTokenAuth do
   @moduledoc """
   Plug that verifies refresh token (if exists, redirects to login page otherwise) using openid connect
   """
@@ -6,9 +6,9 @@ defmodule WebAuth.Plug.RefreshTokenAuth do
   require Logger
 
   alias Plug.Conn
-  alias WebAuth.Session
-  alias WebAuth.Token
-  alias WebAuth.Request
+  alias KeenAuth.Session
+  alias KeenAuth.Token
+  alias KeenAuth.Request
 
   def init(params) do
     %{client: Keyword.fetch!(params, :client)}

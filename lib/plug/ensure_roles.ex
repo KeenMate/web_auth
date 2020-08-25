@@ -1,4 +1,4 @@
-defmodule WebAuth.Plug.EnsureRoles do
+defmodule KeenAuth.Plug.EnsureRoles do
   @default_operation :and
 
   @moduledoc """

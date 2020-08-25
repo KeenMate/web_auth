@@ -1,4 +1,4 @@
-defmodule WebAuth.Token do
+defmodule KeenAuth.Token do
   require Logger
 
   def refresh(refresh_token, client) when is_binary(refresh_token) do

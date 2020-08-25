@@ -1,13 +1,17 @@
-defmodule WebAuth.MixProject do
+defmodule KeenAuth.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :web_auth,
+      app: :keen_auth,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      description: description(),
+      package: package(),
+      deps: deps(),
+      name: "KeenAuth",
+      source_url: "https://github.com/KeenMate/keen_auth.git"
     ]
   end
 
@@ -23,8 +27,22 @@ defmodule WebAuth.MixProject do
     [
       {:openid_connect, "~> 0.2.2"},
       {:plug, "~> 1.10"}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+    ]
+  end
+
+  defp description() do
+    "Library faciliating OpenID authentication flow throughout Phoenix application(s)"
+  end
+
+  defp package() do
+    [
+      # This option is only needed when you don't want to use the OTP application name
+      name: "keen_auth",
+      # These are the default files included in the package
+      files: ~w(lib .formatter.exs mix.exs README* readme* LICENSE*
+                license* CHANGELOG* changelog* src),
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/KeenMate/keen_auth"}
     ]
   end
 end

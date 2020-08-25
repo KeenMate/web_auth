@@ -1,8 +1,8 @@
-defmodule WebAuthTest do
+defmodule KeenAuthTest do
   use ExUnit.Case
-  doctest WebAuth
+  doctest KeenAuth
 
   test "greets the world" do
-    assert WebAuth.hello() == :world
+    assert KeenAuth.hello() == :world
   end
 end
